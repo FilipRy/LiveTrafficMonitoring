@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <title>Live Traffic Monitoring</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1>Live Traffic Monitoring</h1>
+        </div>
+        <div class="col-lg-4 text-right">
+            <h4 id="time-date">Time: 15.2.2014 18:00:00</h4>
+        </div>
+    </div>
+    <div id="map" style="width:100%;height:550px;"></div>
+
+    <h2>Most used roads today</h2>
+    <table class="table">
+        <thread>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Road name</th>
+                <th scope="col">Number of vehicles</th>
+            </tr>
+        </thread>
+        <tbody id="roads-used-table-body"></tbody>
+    </table>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=init">
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
