@@ -1,6 +1,8 @@
 # StreamProcessing
 This module implements an Apache Storm topology, composed of a single Kafka spout and five bolts (as illustrated on the figure below). The data provider, which emulates the real traffic sensors by reading the collected real traffic data and publishing them to a kafka broker, is also implemnted within this module.
 
+![topology](https://github.com/FilipRy/LiveTrafficMonitoring/blob/master/StreamProcessing/assets/live_traffic_monitoring.png)
+
 ## Prerequisites
 1. Installed [Java 8](https://www.java.com/en/download/)
 2. Installed [Gradle](https://gradle.org/)
