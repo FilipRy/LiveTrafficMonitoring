@@ -1,4 +1,7 @@
 
+# Preprocessed traffic data
+StreamProcessing/src/main/resources/trafficData_preprocessed.csv
+
 # Created by https://www.gitignore.io/api/node,java,gradle,webstorm,intellij
 # Edit at https://www.gitignore.io/?templates=node,java,gradle,webstorm,intellij
 
