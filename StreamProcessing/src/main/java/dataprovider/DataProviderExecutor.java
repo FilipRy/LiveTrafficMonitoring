@@ -1,6 +1,6 @@
 package dataprovider;
 
-import config.ConfigurationReader;
+import config.DataProviderConfigurationReader;
 import kafka.IKafkaProducer;
 import kafka.KafkaProducerBuilder;
 import kafka.TrafficDataKafkaProducer;
@@ -9,14 +9,14 @@ public class DataProviderExecutor {
 
     public static void main(String[] args) {
 
-        ConfigurationReader configurationReader = new ConfigurationReader();
+        DataProviderConfigurationReader dataProviderConfigurationReader = new DataProviderConfigurationReader();
 
-//        TrafficMetadataInitializer metadataInitializer = new TrafficMetadataInitializer(configurationReader);
-//        metadataInitializer.putMetadataToDatabase();
+        TrafficMetadataInitializer metadataInitializer = new TrafficMetadataInitializer(dataProviderConfigurationReader);
+        metadataInitializer.putMetadataToDatabase();
 
-        KafkaProducerBuilder kafkaProducerBuilder = new KafkaProducerBuilder(configurationReader);
-        IKafkaProducer kafkaProducer = new TrafficDataKafkaProducer(kafkaProducerBuilder.createProducer(), configurationReader);
-        TrafficSensorDataProvider provider = new TrafficSensorDataProvider(kafkaProducer, configurationReader.getDataProviderSubmissionSpeed());
+        KafkaProducerBuilder kafkaProducerBuilder = new KafkaProducerBuilder(dataProviderConfigurationReader);
+        IKafkaProducer kafkaProducer = new TrafficDataKafkaProducer(kafkaProducerBuilder.createProducer(), dataProviderConfigurationReader);
+        TrafficSensorDataProvider provider = new TrafficSensorDataProvider(kafkaProducer, dataProviderConfigurationReader.getDataProviderSubmissionSpeed());
 
         provider.startProvidingData();
     }

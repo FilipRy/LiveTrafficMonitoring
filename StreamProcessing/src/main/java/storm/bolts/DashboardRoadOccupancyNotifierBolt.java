@@ -1,7 +1,7 @@
 package storm.bolts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import config.ConfigurationReader;
+import config.TopologyConfigurationReader;
 import model.RoadOccupancy;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -17,12 +17,12 @@ import java.util.PriorityQueue;
 
 public class DashboardRoadOccupancyNotifierBolt extends BaseRichBolt {
 
-    private ConfigurationReader configurationReader;
+    private TopologyConfigurationReader topologyConfigurationReader;
     private OutputCollector collector;
 
 
-    public DashboardRoadOccupancyNotifierBolt(ConfigurationReader configurationReader) {
-        this.configurationReader = configurationReader;
+    public DashboardRoadOccupancyNotifierBolt(TopologyConfigurationReader topologyConfigurationReader) {
+        this.topologyConfigurationReader = topologyConfigurationReader;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DashboardRoadOccupancyNotifierBolt extends BaseRichBolt {
         }
 
         HttpEntity<RoadOccupancy[]> roadOccupancyHttpEntity = new HttpEntity<>(roadOccupancies);
-        restTemplate.postForEntity(configurationReader.getDashboardAddress() + "api/v1/most-occupied-roads", roadOccupancyHttpEntity, RoadOccupancy[].class);
+        restTemplate.postForEntity(topologyConfigurationReader.getDashboardAddress() + "api/v1/most-occupied-roads", roadOccupancyHttpEntity, RoadOccupancy[].class);
 
         collector.ack(input);
     }

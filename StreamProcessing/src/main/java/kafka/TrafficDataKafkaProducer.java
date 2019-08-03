@@ -1,6 +1,6 @@
 package kafka;
 
-import config.ConfigurationReader;
+import config.DataProviderConfigurationReader;
 import model.TrafficSensorData;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -15,12 +15,12 @@ public class TrafficDataKafkaProducer implements IKafkaProducer {
     private final static Logger logger = Logger.getLogger(TrafficDataKafkaProducer.class);
 
     private Producer<Long, TrafficSensorData> producer;
-    private ConfigurationReader configurationReader;
+    private DataProviderConfigurationReader dataProviderConfigurationReader;
 
 
-    public TrafficDataKafkaProducer(Producer<Long, TrafficSensorData> producer, ConfigurationReader configurationReader) {
+    public TrafficDataKafkaProducer(Producer<Long, TrafficSensorData> producer, DataProviderConfigurationReader providerConfigurationReader) {
         this.producer = producer;
-        this.configurationReader = configurationReader;
+        this.dataProviderConfigurationReader = providerConfigurationReader;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TrafficDataKafkaProducer implements IKafkaProducer {
 
         dataStream.forEach( data -> {
 
-            ProducerRecord<Long, TrafficSensorData> record = new ProducerRecord<>(configurationReader.getKafkaTopic(), data);
+            ProducerRecord<Long, TrafficSensorData> record = new ProducerRecord<>(dataProviderConfigurationReader.getKafkaTopic(), data);
 
             try {
                 RecordMetadata metadata = producer.send(record).get();

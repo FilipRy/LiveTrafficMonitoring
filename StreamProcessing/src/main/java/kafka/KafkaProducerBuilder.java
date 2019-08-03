@@ -1,6 +1,7 @@
 package kafka;
 
-import config.ConfigurationReader;
+import config.DataProviderConfigurationReader;
+import config.TopologyConfigurationReader;
 import model.TrafficSensorData;
 import model.TrafficSensorDataSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -12,19 +13,16 @@ import java.util.Properties;
 
 public class KafkaProducerBuilder {
 
-    private ConfigurationReader configurationReader;
-
-    private String kafkaBrokers;
-    private String clientId;
+    private DataProviderConfigurationReader providerConfigurationReader;
     
-    public KafkaProducerBuilder(ConfigurationReader configurationReader) {
-        this.configurationReader = configurationReader;
+    public KafkaProducerBuilder(DataProviderConfigurationReader providerConfigurationReader) {
+        this.providerConfigurationReader = providerConfigurationReader;
     }
 
     public Producer<Long, TrafficSensorData> createProducer() {
 
-        String kafkaBrokers = configurationReader.getKafkaBrokerAddresses();
-        String clientId = configurationReader.getKafkaClientId();
+        String kafkaBrokers = providerConfigurationReader.getKafkaBrokerAddresses();
+        String clientId = providerConfigurationReader.getKafkaClientId();
 
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokers);

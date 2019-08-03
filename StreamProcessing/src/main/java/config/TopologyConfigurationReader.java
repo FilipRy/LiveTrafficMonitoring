@@ -5,17 +5,17 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Properties;
 
-public class ConfigurationReader implements Serializable {
+public class TopologyConfigurationReader implements Serializable {
 
     private Properties properties;
 
-    public ConfigurationReader() {
+    public TopologyConfigurationReader() {
         this.init();
     }
 
     private void init() {
         this.properties = new Properties();
-        try (InputStream is = ConfigurationReader.class.getClassLoader().getResourceAsStream("application.properties")) {
+        try (InputStream is = TopologyConfigurationReader.class.getClassLoader().getResourceAsStream("topology.properties")) {
             properties.load(is);
         } catch (IOException e) {
 
@@ -28,10 +28,6 @@ public class ConfigurationReader implements Serializable {
 
     public String getKafkaClientId() {
         return (String) properties.get("kafka.client_id");
-    }
-
-    public String getKafkaZookeeper() {
-        return (String) properties.get("kafka.zookeeper");
     }
 
     public String getKafkaTopic() {

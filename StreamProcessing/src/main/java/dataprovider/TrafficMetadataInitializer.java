@@ -4,7 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.opencsv.CSVReader;
-import config.ConfigurationReader;
+import config.DataProviderConfigurationReader;
 import org.bson.Document;
 
 import java.io.FileReader;
@@ -12,17 +12,17 @@ import java.io.IOException;
 
 public class TrafficMetadataInitializer {
 
-    private ConfigurationReader configurationReader;
+    private DataProviderConfigurationReader providerConfigurationReader;
 
     private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
 
-    public TrafficMetadataInitializer(ConfigurationReader configurationReader) {
-        this.configurationReader = configurationReader;
-        this.mongoClient = new MongoClient(configurationReader.getMongoDBHost(), configurationReader.getMongoDBPort());
-        this.mongoDatabase = this.mongoClient.getDatabase(configurationReader.getMongoDBName());
-        this.mongoCollection = this.mongoDatabase.getCollection(this.configurationReader.getMongoDBCollectionName());
+    public TrafficMetadataInitializer(DataProviderConfigurationReader providerConfigurationReader) {
+        this.providerConfigurationReader = providerConfigurationReader;
+        this.mongoClient = new MongoClient(providerConfigurationReader.getMongoDBHost(), providerConfigurationReader.getMongoDBPort());
+        this.mongoDatabase = this.mongoClient.getDatabase(providerConfigurationReader.getMongoDBName());
+        this.mongoCollection = this.mongoDatabase.getCollection(this.providerConfigurationReader.getMongoDBCollectionName());
     }
 
     public void putMetadataToDatabase() {

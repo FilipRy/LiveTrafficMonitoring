@@ -1,6 +1,6 @@
 package storm.spout;
 
-import config.ConfigurationReader;
+import config.TopologyConfigurationReader;
 import model.TrafficSensorDataDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.kafka.spout.KafkaSpout;
@@ -8,15 +8,15 @@ import org.apache.storm.kafka.spout.KafkaSpoutConfig;
 
 public class KafkaSpoutBuilder {
 
-    private ConfigurationReader configurationReader;
+    private TopologyConfigurationReader topologyConfigurationReader;
 
-    public KafkaSpoutBuilder(ConfigurationReader configurationReader) {
-        this.configurationReader = configurationReader;
+    public KafkaSpoutBuilder(TopologyConfigurationReader topologyConfigurationReader) {
+        this.topologyConfigurationReader = topologyConfigurationReader;
     }
 
     public KafkaSpout buildKafkaSpout() {
 
-        KafkaSpoutConfig kafkaSpoutConfig = KafkaSpoutConfig.builder(configurationReader.getKafkaBrokerAddresses(), configurationReader.getKafkaTopic())
+        KafkaSpoutConfig kafkaSpoutConfig = KafkaSpoutConfig.builder(topologyConfigurationReader.getKafkaBrokerAddresses(), topologyConfigurationReader.getKafkaTopic())
                 .setProp(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TrafficSensorDataDeserializer.class)
                 .setProp(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, TrafficSensorDataDeserializer.class)
                 .build();

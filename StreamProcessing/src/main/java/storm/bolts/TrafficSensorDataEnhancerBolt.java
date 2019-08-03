@@ -5,7 +5,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import config.ConfigurationReader;
+import config.TopologyConfigurationReader;
 import model.TrafficSensorData;
 import org.apache.log4j.Logger;
 import org.apache.storm.task.OutputCollector;
@@ -24,23 +24,23 @@ public class TrafficSensorDataEnhancerBolt extends BaseRichBolt {
     private final static Logger logger = Logger.getLogger(TrafficSensorDataEnhancerBolt.class);
 
     private OutputCollector collector;
-    private ConfigurationReader configurationReader;
+    private TopologyConfigurationReader topologyConfigurationReader;
 
     private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
 
 
-    public TrafficSensorDataEnhancerBolt(ConfigurationReader configurationReader) {
-        this.configurationReader = configurationReader;
+    public TrafficSensorDataEnhancerBolt(TopologyConfigurationReader topologyConfigurationReader) {
+        this.topologyConfigurationReader = topologyConfigurationReader;
     }
 
     @Override
     public void prepare(Map<String, Object> topoConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        this.mongoClient = new MongoClient(configurationReader.getMongoDBHost(), configurationReader.getMongoDBPort());
-        this.mongoDatabase = this.mongoClient.getDatabase(configurationReader.getMongoDBName());
-        this.mongoCollection = this.mongoDatabase.getCollection(this.configurationReader.getMongoDBCollectionName());
+        this.mongoClient = new MongoClient(topologyConfigurationReader.getMongoDBHost(), topologyConfigurationReader.getMongoDBPort());
+        this.mongoDatabase = this.mongoClient.getDatabase(topologyConfigurationReader.getMongoDBName());
+        this.mongoCollection = this.mongoDatabase.getCollection(this.topologyConfigurationReader.getMongoDBCollectionName());
     }
 
     @Override
@@ -52,8 +52,8 @@ public class TrafficSensorDataEnhancerBolt extends BaseRichBolt {
 
         logger.info("Publishing TrafficSensorData " + trafficSensorData.toString() + "to dashboard and occupancy streams");
 
-        this.collector.emit(this.configurationReader.getStormStreamDashboardMapNotifier(), input, new Values(trafficSensorData));
-        this.collector.emit(this.configurationReader.getStormStreamRoadDailyOccupancy(), input, new Values(trafficSensorData));
+        this.collector.emit(this.topologyConfigurationReader.getStormStreamDashboardMapNotifier(), input, new Values(trafficSensorData));
+        this.collector.emit(this.topologyConfigurationReader.getStormStreamRoadDailyOccupancy(), input, new Values(trafficSensorData));
         this.collector.ack(input);
     }
 
@@ -79,7 +79,7 @@ public class TrafficSensorDataEnhancerBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declareStream(this.configurationReader.getStormStreamDashboardMapNotifier(), new Fields("traffic-sensor-data"));
-        declarer.declareStream(this.configurationReader.getStormStreamRoadDailyOccupancy(), new Fields("traffic-sensor-data"));
+        declarer.declareStream(this.topologyConfigurationReader.getStormStreamDashboardMapNotifier(), new Fields("traffic-sensor-data"));
+        declarer.declareStream(this.topologyConfigurationReader.getStormStreamRoadDailyOccupancy(), new Fields("traffic-sensor-data"));
     }
 }

@@ -1,6 +1,6 @@
 package storm.bolts;
 
-import config.ConfigurationReader;
+import config.TopologyConfigurationReader;
 import model.RoadOccupancy;
 import model.TrafficSensorData;
 import org.apache.log4j.Logger;
@@ -22,10 +22,10 @@ public class RoadDailyOccupancyBolt extends BaseStatefulBolt<KeyValueState<Long,
     private KeyValueState<Long, RoadOccupancy> kvState;
     private OutputCollector collector;
 
-    private ConfigurationReader configurationReader;
+    private TopologyConfigurationReader topologyConfigurationReader;
 
-    public RoadDailyOccupancyBolt(ConfigurationReader configurationReader) {
-        this.configurationReader = configurationReader;
+    public RoadDailyOccupancyBolt(TopologyConfigurationReader topologyConfigurationReader) {
+        this.topologyConfigurationReader = topologyConfigurationReader;
     }
 
     @Override
@@ -61,13 +61,13 @@ public class RoadDailyOccupancyBolt extends BaseStatefulBolt<KeyValueState<Long,
 
         logger.info("Publishing RoadOccupancy " + roadOccupancy.toString() + " to top-occupied-roads-stream");
 
-        collector.emit(configurationReader.getStormStreamTopOccupiedRoads(), input, new Values(roadOccupancy));
+        collector.emit(topologyConfigurationReader.getStormStreamTopOccupiedRoads(), input, new Values(roadOccupancy));
         collector.ack(input);
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declareStream(configurationReader.getStormStreamTopOccupiedRoads(), new Fields("road-occupancy-data"));
+        declarer.declareStream(topologyConfigurationReader.getStormStreamTopOccupiedRoads(), new Fields("road-occupancy-data"));
     }
 
 }

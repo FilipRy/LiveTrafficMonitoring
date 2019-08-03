@@ -1,13 +1,11 @@
 package storm.bolts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import config.ConfigurationReader;
+import config.TopologyConfigurationReader;
 import model.TrafficSensorData;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
-import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
-import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Tuple;
 import org.springframework.http.HttpEntity;
@@ -18,11 +16,11 @@ import java.util.Map;
 
 public class DashboardMapNotifierBolt extends BaseRichBolt {
 
-    private ConfigurationReader configurationReader;
+    private TopologyConfigurationReader topologyConfigurationReader;
     private OutputCollector collector;
 
-    public DashboardMapNotifierBolt(ConfigurationReader configurationReader) {
-        this.configurationReader = configurationReader;
+    public DashboardMapNotifierBolt(TopologyConfigurationReader topologyConfigurationReader) {
+        this.topologyConfigurationReader = topologyConfigurationReader;
     }
 
     @Override
@@ -40,7 +38,7 @@ public class DashboardMapNotifierBolt extends BaseRichBolt {
         messageConverter.setObjectMapper(mapper);
         restTemplate.getMessageConverters().add(messageConverter);
         HttpEntity<TrafficSensorData> trafficSensorDataHttpEntity = new HttpEntity<>(trafficSensorData);
-        restTemplate.postForObject(configurationReader.getDashboardAddress() + "/api/v1/traffic-report", trafficSensorDataHttpEntity, TrafficSensorData.class);
+        restTemplate.postForObject(topologyConfigurationReader.getDashboardAddress() + "/api/v1/traffic-report", trafficSensorDataHttpEntity, TrafficSensorData.class);
         this.collector.ack(input);
     }
 

@@ -1,4 +1,4 @@
-import config.ConfigurationReader;
+import config.TopologyConfigurationReader;
 import org.apache.storm.Config;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.generated.StormTopology;
@@ -11,28 +11,28 @@ public class SubmitTopologyExecutor {
 
     public static void main(String[] args) throws Exception {
 
-        ConfigurationReader configurationReader = new ConfigurationReader();
+        TopologyConfigurationReader topologyConfigurationReader = new TopologyConfigurationReader();
 
-        KafkaSpoutBuilder kafkaSpoutBuilder = new KafkaSpoutBuilder(configurationReader);
+        KafkaSpoutBuilder kafkaSpoutBuilder = new KafkaSpoutBuilder(topologyConfigurationReader);
         KafkaSpout kafkaSpout = kafkaSpoutBuilder.buildKafkaSpout();
 
-        TrafficSensorDataEnhancerBolt enhancerBolt = new TrafficSensorDataEnhancerBolt(configurationReader);
-        DashboardMapNotifierBolt dashboardMapNotifierBolt = new DashboardMapNotifierBolt(configurationReader);
-        RoadDailyOccupancyBolt roadDailyOccupancyBolt = new RoadDailyOccupancyBolt(configurationReader);
-        TopOccupiedRoadsBolt topOccupiedRoadsBolt = new TopOccupiedRoadsBolt(5, configurationReader);
-        DashboardRoadOccupancyNotifierBolt roadOccupancyNotifierBolt = new DashboardRoadOccupancyNotifierBolt(configurationReader);
+        TrafficSensorDataEnhancerBolt enhancerBolt = new TrafficSensorDataEnhancerBolt(topologyConfigurationReader);
+        DashboardMapNotifierBolt dashboardMapNotifierBolt = new DashboardMapNotifierBolt(topologyConfigurationReader);
+        RoadDailyOccupancyBolt roadDailyOccupancyBolt = new RoadDailyOccupancyBolt(topologyConfigurationReader);
+        TopOccupiedRoadsBolt topOccupiedRoadsBolt = new TopOccupiedRoadsBolt(5, topologyConfigurationReader);
+        DashboardRoadOccupancyNotifierBolt roadOccupancyNotifierBolt = new DashboardRoadOccupancyNotifierBolt(topologyConfigurationReader);
 
-        String stormKafkaSpoutId = configurationReader.getStormKafkaSpoutId();
-        String stormBoltEnhancerId = configurationReader.getStormBoltEnhancerId();
-        String stormBoltDashboardMapNotifierId = configurationReader.getStormBoltDashboardMapNotifierId();
-        String stormBoltDashboardRoadNotifierId = configurationReader.getStormBoltDashboardRoadNotifierId();
-        String stormBoltRoadDailyOccupancyId = configurationReader.getStormBoltRoadDailyOccupancyId();
-        String stormBoltTopOccupiedRoadId = configurationReader.getStormBoltTopOccupiedRoadId();
+        String stormKafkaSpoutId = topologyConfigurationReader.getStormKafkaSpoutId();
+        String stormBoltEnhancerId = topologyConfigurationReader.getStormBoltEnhancerId();
+        String stormBoltDashboardMapNotifierId = topologyConfigurationReader.getStormBoltDashboardMapNotifierId();
+        String stormBoltDashboardRoadNotifierId = topologyConfigurationReader.getStormBoltDashboardRoadNotifierId();
+        String stormBoltRoadDailyOccupancyId = topologyConfigurationReader.getStormBoltRoadDailyOccupancyId();
+        String stormBoltTopOccupiedRoadId = topologyConfigurationReader.getStormBoltTopOccupiedRoadId();
 
-        String stormStreamDashboardMap = configurationReader.getStormStreamDashboardMapNotifier();
-        String stormStreamDashboardRoad = configurationReader.getStormStreamDashboardRoadNotifier();
-        String stormStreamRoadDailyOccupancy = configurationReader.getStormStreamRoadDailyOccupancy();
-        String stormStreamTopOccupiedRoad = configurationReader.getStormStreamTopOccupiedRoads();
+        String stormStreamDashboardMap = topologyConfigurationReader.getStormStreamDashboardMapNotifier();
+        String stormStreamDashboardRoad = topologyConfigurationReader.getStormStreamDashboardRoadNotifier();
+        String stormStreamRoadDailyOccupancy = topologyConfigurationReader.getStormStreamRoadDailyOccupancy();
+        String stormStreamTopOccupiedRoad = topologyConfigurationReader.getStormStreamTopOccupiedRoads();
 
         TopologyBuilder topologyBuilder = new TopologyBuilder();
         topologyBuilder.setSpout(stormKafkaSpoutId, kafkaSpout, 1);
@@ -43,9 +43,9 @@ public class SubmitTopologyExecutor {
         topologyBuilder.setBolt(stormBoltDashboardRoadNotifierId, roadOccupancyNotifierBolt, 1).shuffleGrouping(stormBoltTopOccupiedRoadId, stormStreamDashboardRoad);
 
         Config conf = new Config();
-        String topologyName =  configurationReader.getStormTopologyName();
+        String topologyName =  topologyConfigurationReader.getStormTopologyName();
         // Defines how many worker processes have to be created for the topology in the cluster.
-        conf.setNumWorkers(5);
+        conf.setNumWorkers(4);
         conf.setMaxSpoutPending(5000);
 
         StormTopology topology = topologyBuilder.createTopology();
