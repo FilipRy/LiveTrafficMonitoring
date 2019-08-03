@@ -18,7 +18,31 @@ The app has two following configuration files stored in `src/main/resources/topo
 ## Getting Started
 
 ### Preprocessing the traffic data
+You can either work with the already preprocessed data ([download]()), or preprocess the data on your own by following the steps below:
 
+1. Download the traffic dataset-1 from [here](http://iot.ee.surrey.ac.uk:8080/datasets.html#traffic).
+2. Merge all .csv files into a single one by executing the following script:
+```
+for FILE in *.csv
+do
+        exec 5<"$FILE"
+        read LINE <&5 
+        [ -z "$FIRST" ] && echo "$LINE"
+        FIRST="no"
+
+        cat <&5
+        exec 5<&-
+done > trafficData_all.out
+```
+3. Rename `trafficData_all.out` to `trafficData_all.csv`
+4. Create `import.script` file with the following content:
+```
+create table trafficData(status text, avgMeasuredTime integer, avgSpeed integer, extId integer, medianMeasuredTime integer, TIMESTAMP datetime, vehicleCount integer, _id integer, REPORT_ID integer);
+.mode csv
+.import 'trafficData_all.csv' TrafficData
+```
+5. Execute `sqlite3 TrafficData < import.script`
+6. Execute `sqlite3 -csv TrafficData "SELECT * FROM trafficData ORDER BY 6" > trafficData_preprocessed.csv`
 ### Running
 1. Set up a Storm Cluster, composed of a single Nimbus and Supervisor node, kafka broker and mongodb in docker containers.
 ```
