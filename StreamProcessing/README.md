@@ -18,7 +18,7 @@ The app has two following configuration files stored in `src/main/resources/topo
 ## Getting Started
 
 ### Preprocessing the traffic data
-You can either work with the already preprocessed data ([download]()), or preprocess the data on your own by following the steps below:
+You can either work with the already preprocessed data ([download](https://drive.google.com/open?id=1dK1--y0cWnALtLI6jTZvO0_3AjFhMUKd)), or preprocess the data on your own by following the steps below:
 
 1. Download the traffic dataset-1 from [here](http://iot.ee.surrey.ac.uk:8080/datasets.html#traffic).
 2. Merge all .csv files into a single one by executing the following script:
