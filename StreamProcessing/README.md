@@ -5,8 +5,7 @@ This module implements an Apache Storm topology, composed of a single Kafka spou
 
 ## Prerequisites
 1. Installed [Java 8](https://www.java.com/en/download/)
-2. Installed [Gradle](https://gradle.org/)
-3. Installed [Docker](https://www.docker.com/)
+2. Installed [Docker](https://www.docker.com/)
 
 ## Configuration
 The app has two following configuration files stored in `src/main/resources/topology.properties` (configuration of the storm topology) and `src/main/resources/provider.properties` (configuration of the data provider). You have to override the following fields:
@@ -50,7 +49,7 @@ docker-compose up
 ```
 2. Build the topology
 ```
-gradle fatJar
+./gradlew fatJar
 ```
 3. Submit the built topology to the Storm cluster
 ```
@@ -60,7 +59,7 @@ docker run --link nimbus --network streamprocessing_default -it --rm -v $(pwd)/b
 4. Start the [Dashboard module](https://github.com/FilipRy/LiveTrafficMonitoring/tree/master/Dashboard) so that you can see the visualized data when you start the data provider in the next step.
 5. Start the data provider, which emulates the real traffic sensors and publishes the traffic data to kafka broker.
 ```
-gradle executeDataProvider
+./gradlew executeDataProvider
 ```
 7. Navigate to the Dashboard running at `localhost:9000` in your browser and enjoy!
 
