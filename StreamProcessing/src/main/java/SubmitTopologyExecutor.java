@@ -21,6 +21,7 @@ public class SubmitTopologyExecutor {
         RoadDailyOccupancyBolt roadDailyOccupancyBolt = new RoadDailyOccupancyBolt(topologyConfigurationReader);
         TopOccupiedRoadsBolt topOccupiedRoadsBolt = new TopOccupiedRoadsBolt(5, topologyConfigurationReader);
         DashboardRoadOccupancyNotifierBolt roadOccupancyNotifierBolt = new DashboardRoadOccupancyNotifierBolt(topologyConfigurationReader);
+        ThroughputBenchmarkBolt throughputBenchmarkBolt = new ThroughputBenchmarkBolt();
 
         String stormKafkaSpoutId = topologyConfigurationReader.getStormKafkaSpoutId();
         String stormBoltEnhancerId = topologyConfigurationReader.getStormBoltEnhancerId();
@@ -28,25 +29,32 @@ public class SubmitTopologyExecutor {
         String stormBoltDashboardRoadNotifierId = topologyConfigurationReader.getStormBoltDashboardRoadNotifierId();
         String stormBoltRoadDailyOccupancyId = topologyConfigurationReader.getStormBoltRoadDailyOccupancyId();
         String stormBoltTopOccupiedRoadId = topologyConfigurationReader.getStormBoltTopOccupiedRoadId();
+        String stormBoltBenchmarksId = topologyConfigurationReader.getStormBoltBenchmarkThroughputId();
 
         String stormStreamDashboardMap = topologyConfigurationReader.getStormStreamDashboardMapNotifier();
         String stormStreamDashboardRoad = topologyConfigurationReader.getStormStreamDashboardRoadNotifier();
         String stormStreamRoadDailyOccupancy = topologyConfigurationReader.getStormStreamRoadDailyOccupancy();
         String stormStreamTopOccupiedRoad = topologyConfigurationReader.getStormStreamTopOccupiedRoads();
+        String stormStreamBenchmarks = topologyConfigurationReader.getStormStreamBenchmarks();
 
         TopologyBuilder topologyBuilder = new TopologyBuilder();
-        topologyBuilder.setSpout(stormKafkaSpoutId, kafkaSpout, 1);
-        topologyBuilder.setBolt(stormBoltEnhancerId, enhancerBolt, 1).shuffleGrouping(stormKafkaSpoutId);
-        topologyBuilder.setBolt(stormBoltDashboardMapNotifierId, dashboardMapNotifierBolt, 1).shuffleGrouping(stormBoltEnhancerId, stormStreamDashboardMap);
-        topologyBuilder.setBolt(stormBoltRoadDailyOccupancyId, roadDailyOccupancyBolt, 1).shuffleGrouping(stormBoltEnhancerId, stormStreamRoadDailyOccupancy);
-        topologyBuilder.setBolt(stormBoltTopOccupiedRoadId, topOccupiedRoadsBolt, 1).shuffleGrouping(stormBoltRoadDailyOccupancyId, stormStreamTopOccupiedRoad);
-        topologyBuilder.setBolt(stormBoltDashboardRoadNotifierId, roadOccupancyNotifierBolt, 1).shuffleGrouping(stormBoltTopOccupiedRoadId, stormStreamDashboardRoad);
+        topologyBuilder.setSpout(stormKafkaSpoutId, kafkaSpout, 4);
+        topologyBuilder.setBolt(stormBoltEnhancerId, enhancerBolt, 4).shuffleGrouping(stormKafkaSpoutId);
+        topologyBuilder.setBolt(stormBoltRoadDailyOccupancyId, roadDailyOccupancyBolt, 4).shuffleGrouping(stormBoltEnhancerId, stormStreamRoadDailyOccupancy);
+
+        if (topologyConfigurationReader.isBenchmarking()) {
+            topologyBuilder.setBolt(stormBoltBenchmarksId, throughputBenchmarkBolt, 1).shuffleGrouping(stormBoltRoadDailyOccupancyId, stormStreamBenchmarks);
+        } else {
+            topologyBuilder.setBolt(stormBoltDashboardMapNotifierId, dashboardMapNotifierBolt, 4).shuffleGrouping(stormBoltEnhancerId, stormStreamDashboardMap);
+            topologyBuilder.setBolt(stormBoltTopOccupiedRoadId, topOccupiedRoadsBolt, 4).shuffleGrouping(stormBoltRoadDailyOccupancyId, stormStreamTopOccupiedRoad);
+            topologyBuilder.setBolt(stormBoltDashboardRoadNotifierId, roadOccupancyNotifierBolt, 4).shuffleGrouping(stormBoltTopOccupiedRoadId, stormStreamDashboardRoad);
+        }
 
         Config conf = new Config();
         String topologyName =  topologyConfigurationReader.getStormTopologyName();
         // Defines how many worker processes have to be created for the topology in the cluster.
-        conf.setNumWorkers(4);
-        conf.setMaxSpoutPending(5000);
+        conf.setNumWorkers(8);
+        conf.setMaxSpoutPending(500);
 
         StormTopology topology = topologyBuilder.createTopology();
         StormSubmitter.submitTopology(topologyName, conf, topology);

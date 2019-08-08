@@ -62,12 +62,18 @@ public class RoadDailyOccupancyBolt extends BaseStatefulBolt<KeyValueState<Long,
         logger.info("Publishing RoadOccupancy " + roadOccupancy.toString() + " to top-occupied-roads-stream");
 
         collector.emit(topologyConfigurationReader.getStormStreamTopOccupiedRoads(), input, new Values(roadOccupancy));
+        if (topologyConfigurationReader.isBenchmarking()) {
+            collector.emit(topologyConfigurationReader.getStormStreamBenchmarks(), input, new Values(roadOccupancy));
+        }
         collector.ack(input);
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declareStream(topologyConfigurationReader.getStormStreamTopOccupiedRoads(), new Fields("road-occupancy-data"));
+        if (topologyConfigurationReader.isBenchmarking()) {
+            declarer.declareStream(topologyConfigurationReader.getStormStreamBenchmarks(), new Fields("road-occupancy-data"));
+        }
     }
 
 }

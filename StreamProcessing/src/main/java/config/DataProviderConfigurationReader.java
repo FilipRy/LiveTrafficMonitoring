@@ -54,5 +54,9 @@ public class DataProviderConfigurationReader {
         return Integer.parseInt((String) properties.get("dataprovider.submissionSpeed"));
     }
 
+    public String getTrafficDataSourcePath() {
+        return (String) properties.get("dataprovider.trafficData.path");
+    }
+
 
 }

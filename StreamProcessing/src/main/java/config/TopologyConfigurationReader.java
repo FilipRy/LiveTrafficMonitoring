@@ -91,15 +91,28 @@ public class TopologyConfigurationReader implements Serializable {
     }
 
     public String getStormStreamRoadDailyOccupancy() {
-        return (String) properties.get("strom.stream.roadDailyOccupancy");
+        return (String) properties.get("storm.stream.roadDailyOccupancy");
     }
 
     public String getStormStreamTopOccupiedRoads() {
-        return (String) properties.get("strom.stream.topOccupiedRoads");
+        return (String) properties.get("storm.stream.topOccupiedRoads");
     }
 
     public String getStormTopologyName() {
         return (String) properties.get("storm.topology.name");
+    }
+
+    public String getStormBoltBenchmarkThroughputId() {
+        return (String) properties.get("storm.bolt.benchmarkThroughput.id");
+    }
+
+    public String getStormStreamBenchmarks() {
+        return (String) properties.get("storm.stream.benchmark");
+    }
+
+    public boolean isBenchmarking() {
+        String prop = (String) properties.get("topology.isBenchmarking");
+        return prop.equals("true");
     }
 
 }

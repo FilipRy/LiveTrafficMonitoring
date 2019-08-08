@@ -64,6 +64,7 @@ public class TopOccupiedRoadsBolt extends BaseStatefulBolt<KeyValueState<String,
         if (mostOccupiedRoadsSorted.size() < this.topNOccupiedRoads) {
             this.addRoadOccEntryToPriorityQueue(mostOccupiedRoadsSorted, roadOccupancy);
             logger.info("Publishing most occupied road data " + mostOccupiedRoadsSorted + " to dashboard road stream");
+            this.kvState.put(TOP_KEY, mostOccupiedRoadsSorted);
             collector.emit(this.topologyConfigurationReader.getStormStreamDashboardRoadNotifier(), input, new Values(mostOccupiedRoadsSorted));
         } else {
             RoadOccupancy smallestTopOccupancy = mostOccupiedRoadsSorted.peek();
@@ -73,10 +74,10 @@ public class TopOccupiedRoadsBolt extends BaseStatefulBolt<KeyValueState<String,
                     mostOccupiedRoadsSorted.poll();
                 }
                 logger.info("Publishing most occupied road data " + mostOccupiedRoadsSorted + " to dashboard road stream");
+                this.kvState.put(TOP_KEY, mostOccupiedRoadsSorted);
                 collector.emit(this.topologyConfigurationReader.getStormStreamDashboardRoadNotifier(), input, new Values(mostOccupiedRoadsSorted));
             }
         }
-        this.kvState.put(TOP_KEY, mostOccupiedRoadsSorted);
         collector.ack(input);
     }
 

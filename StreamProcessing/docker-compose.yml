@@ -11,7 +11,7 @@ services:
       - zookeeper
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_CREATE_TOPICS: "traffic_data:1:1"
+      KAFKA_CREATE_TOPICS: "traffic_data:4:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -37,10 +37,10 @@ services:
     volumes:
       - ./storm/storm.yaml:/conf/storm.yaml
 
-  supervisor:
+  supervisor_1:
     image: storm:2.0.0
-    container_name: supervisor
     command: storm supervisor
+    container_name: supervisor_1
     depends_on:
       - nimbus
       - zookeeper
@@ -48,11 +48,20 @@ services:
       - nimbus
       - zookeeper
     restart: always
-    ports:
-      - 6700:6700
-      - 6701:6701
-      - 6702:6702
-      - 6703:6703
+    volumes:
+      - ./storm/storm.yaml:/conf/storm.yaml
+
+  supervisor_2:
+    image: storm:2.0.0
+    command: storm supervisor
+    container_name: supervisor_2
+    depends_on:
+      - nimbus
+      - zookeeper
+    links:
+      - nimbus
+      - zookeeper
+    restart: always
     volumes:
       - ./storm/storm.yaml:/conf/storm.yaml
 
@@ -61,11 +70,13 @@ services:
     container_name: ui
     command: storm ui
     depends_on:
-      - supervisor
+      - supervisor_1
+      - supervisor_2
       - nimbus
       - zookeeper
     links:
-      - supervisor
+      - supervisor_1
+      - supervisor_2
       - nimbus
       - zookeeper
     restart: always

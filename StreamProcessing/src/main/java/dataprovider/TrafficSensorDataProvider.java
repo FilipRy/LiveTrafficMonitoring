@@ -1,6 +1,7 @@
 package dataprovider;
 
 import com.opencsv.CSVReader;
+import config.DataProviderConfigurationReader;
 import kafka.IKafkaProducer;
 import model.TrafficSensorData;
 import org.apache.log4j.Logger;
@@ -20,10 +21,12 @@ public class TrafficSensorDataProvider {
 
     private IKafkaProducer kafkaProducer;
     private int submissionSpeed;
+    private String trafficDataSourcePath;
 
-    public TrafficSensorDataProvider(IKafkaProducer kafkaProducer, int submissionSpeed) {
+    public TrafficSensorDataProvider(IKafkaProducer kafkaProducer, DataProviderConfigurationReader dataProviderConfigurationReader) {
         this.kafkaProducer = kafkaProducer;
-        this.submissionSpeed = submissionSpeed;
+        this.submissionSpeed = dataProviderConfigurationReader.getDataProviderSubmissionSpeed();
+        this.trafficDataSourcePath = dataProviderConfigurationReader.getTrafficDataSourcePath();
     }
 
     public void startProvidingData() {
@@ -36,7 +39,7 @@ public class TrafficSensorDataProvider {
 
         boolean readAllData = false;
 
-        try (FileReader fileReader = new FileReader("src/main/resources/trafficData_preprocessed.csv")) {
+        try (FileReader fileReader = new FileReader(this.trafficDataSourcePath)) {
 
 
             CSVReader csvReader = new CSVReader(fileReader);

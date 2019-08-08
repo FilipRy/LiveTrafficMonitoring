@@ -16,7 +16,7 @@ public class DataProviderExecutor {
 
         KafkaProducerBuilder kafkaProducerBuilder = new KafkaProducerBuilder(dataProviderConfigurationReader);
         IKafkaProducer kafkaProducer = new TrafficDataKafkaProducer(kafkaProducerBuilder.createProducer(), dataProviderConfigurationReader);
-        TrafficSensorDataProvider provider = new TrafficSensorDataProvider(kafkaProducer, dataProviderConfigurationReader.getDataProviderSubmissionSpeed());
+        TrafficSensorDataProvider provider = new TrafficSensorDataProvider(kafkaProducer, dataProviderConfigurationReader);
 
         provider.startProvidingData();
     }
