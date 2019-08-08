@@ -68,5 +68,22 @@ docker run --link nimbus --network streamprocessing_default -it --rm -v $(pwd)/b
 * [Java 8](https://www.java.com/en/download/)
 * [Gradle](https://gradle.org/) - Build and Dependency Management
 * [Docker](https://www.docker.com/) - Execution Environment
+
+## Benchmarking 
+
+Executed a set of experiments to benchmark different configurations of the Apache Storm topology. Throughput has been measured in the meaning of: how many messages (traffic data entries) can be processed in the topology per unit of time.
+
+Benchmark setting: Intel Core i7-6820HQ CPU (2.7GHz), 16 GB RAM.
+
+| Id | # Supervisors | # Workers | Parallelism hint | Throughput (messages/sec) |
+|:--:|:-------------:|:---------:|:----------------:|:-------------------------:|
+| 1  | 1             | 4         | 1                | 490                       |
+| 2  | 2             | 8         | 2                | 884                       |
+| 3  | 2             | 8         | 4                | 1428                      |
+| 4  | 2             | 8         | 8                | 1412                      |
+| 5  | 2             | 8         | 16               | 1369                      |
+| 6  | 3             | 12        | 4                | 1256                      |
+| 7  | 4             | 16        | 8                | 1364                      |
+
 ------------------------
 Licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
